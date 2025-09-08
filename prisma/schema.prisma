@@ -10,7 +10,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// User and Authentication Models
+// ========================================
+// AUTHENTICATION & USER MANAGEMENT
+// ========================================
+
 model User {
   id            String    @id @default(cuid())
   email         String    @unique
@@ -20,6 +23,8 @@ model User {
   badgeNumber   String?   @unique
   phone         String?
   isActive      Boolean   @default(true)
+  lastLogin     DateTime?
+  preferences   Json?     @default("{}")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -30,6 +35,8 @@ model User {
   incidentLogs  IncidentLog[]
   assignments   Assignment[]
   notifications Notification[]
+  auditLogs     AuditLog[]
+  reports       Report[]
 
   @@map("users")
 }
@@ -73,10 +80,14 @@ model VerificationToken {
   @@map("verificationtokens")
 }
 
-// Personnel Management
+// ========================================
+// PERSONNEL MANAGEMENT
+// ========================================
+
 model Personnel {
   id                String        @id @default(cuid())
   userId            String        @unique
+  employeeId        String        @unique
   rank              String?
   certifications    String[]      @default([])
   qualifications    String[]      @default([])
@@ -86,6 +97,8 @@ model Personnel {
   currentAssignment String?
   emergencyContact  String?
   medicalInfo       String?
+  trainingHours     Int           @default(0)
+  performanceScore  Float?
   notes             String?
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
@@ -95,11 +108,47 @@ model Personnel {
   station           Station?      @relation(fields: [stationId], references: [id])
   assignments       Assignment[]
   incidentLogs      IncidentLog[]
+  trainingRecords   TrainingRecord[]
+  performanceReviews PerformanceReview[]
 
   @@map("personnel")
 }
 
-// Station/Facility Management
+model TrainingRecord {
+  id          String   @id @default(cuid())
+  personnelId String
+  courseName  String
+  completedAt DateTime
+  score       Float?
+  certificate String?
+  expiresAt   DateTime?
+  notes       String?
+
+  // Relations
+  personnel   Personnel @relation(fields: [personnelId], references: [id], onDelete: Cascade)
+
+  @@map("training_records")
+}
+
+model PerformanceReview {
+  id          String   @id @default(cuid())
+  personnelId String
+  reviewDate  DateTime
+  score       Float
+  comments    String?
+  reviewedBy  String
+  createdAt   DateTime @default(now())
+
+  // Relations
+  personnel   Personnel @relation(fields: [personnelId], references: [id], onDelete: Cascade)
+
+  @@map("performance_reviews")
+}
+
+// ========================================
+// STATION & FACILITY MANAGEMENT
+// ========================================
+
 model Station {
   id          String   @id @default(cuid())
   name        String
@@ -110,6 +159,9 @@ model Station {
   email       String?
   capacity    Int?
   isActive    Boolean  @default(true)
+  coverage    Float?   // Coverage area in sq km
+  population  Int?     // Population served
+  established DateTime?
   notes       String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -119,11 +171,60 @@ model Station {
   vehicles    Vehicle[]
   hydrants    Hydrant[]
   incidents   Incident[]
+  equipment   Equipment[]
+  maintenance MaintenanceRecord[]
 
   @@map("stations")
 }
 
-// Vehicle/Apparatus Management
+model Equipment {
+  id              String          @id @default(cuid())
+  name            String
+  type            EquipmentType
+  stationId       String
+  serialNumber    String?         @unique
+  status          EquipmentStatus @default(OUT_OF_SERVICE)
+  lastInspection  DateTime?
+  nextInspection  DateTime?
+  warrantyExpiry  DateTime?
+  purchaseDate    DateTime?
+  cost            Float?
+  notes           String?
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relations
+  station         Station         @relation(fields: [stationId], references: [id])
+  maintenance     MaintenanceRecord[]
+
+  @@map("equipment")
+}
+
+model MaintenanceRecord {
+  id          String   @id @default(cuid())
+  stationId   String?
+  equipmentId String?
+  vehicleId   String?
+  type        MaintenanceType
+  description String
+  performedBy String
+  performedAt DateTime
+  cost        Float?
+  notes       String?
+
+  // Relations
+  station     Station?  @relation(fields: [stationId], references: [id])
+  equipment   Equipment? @relation(fields: [equipmentId], references: [id])
+  vehicle     Vehicle?  @relation(fields: [vehicleId], references: [id])
+
+  @@map("maintenance_records")
+}
+
+// ========================================
+// VEHICLE & APPARATUS MANAGEMENT
+// ========================================
+
 model Vehicle {
   id              String        @id @default(cuid())
   unitId          String        @unique
@@ -138,6 +239,13 @@ model Vehicle {
   capabilities    String[]      @default([])
   lastService     DateTime?
   nextService     DateTime?
+  mileage         Int?
+  year            Int?
+  make            String?
+  model           String?
+  vin             String?
+  licensePlate    String?
+  insuranceExpiry DateTime?
   notes           String?
   isActive        Boolean       @default(true)
   createdAt       DateTime      @default(now())
@@ -147,11 +255,15 @@ model Vehicle {
   station         Station       @relation(fields: [stationId], references: [id])
   assignments     Assignment[]
   incidentLogs    IncidentLog[]
+  maintenance     MaintenanceRecord[]
 
   @@map("vehicles")
 }
 
-// Hydrant/Water Source Management
+// ========================================
+// HYDRANT & WATER SOURCE MANAGEMENT
+// ========================================
+
 model Hydrant {
   id              String      @id @default(cuid())
   hydrantId       String      @unique
@@ -165,6 +277,7 @@ model Hydrant {
   nextInspection  DateTime?
   accessibility   String?
   status          HydrantStatus @default(UNKNOWN)
+  type            HydrantType @default(DRY_BARREL)
   notes           String?
   isActive        Boolean     @default(true)
   createdAt       DateTime    @default(now())
@@ -176,7 +289,10 @@ model Hydrant {
   @@map("hydrants")
 }
 
-// Incident Management
+// ========================================
+// INCIDENT MANAGEMENT
+// ========================================
+
 model Incident {
   id              String          @id @default(cuid())
   incidentNumber  String          @unique
@@ -201,7 +317,12 @@ model Incident {
   fatalities      Int             @default(0)
   cause           String?
   weather         String?
+  temperature     Float?
+  windSpeed       Float?
+  windDirection   String?
+  humidity        Float?
   notes           String?
+  tags            String[]        @default([])
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
@@ -210,6 +331,7 @@ model Incident {
   logs            IncidentLog[]
   evidence        Evidence[]
   assignments     Assignment[]
+  reports         Report[]
 
   @@map("incidents")
 }
@@ -225,6 +347,7 @@ model IncidentLog {
   timestamp   DateTime    @default(now())
   latitude    Float?
   longitude   Float?
+  isPublic    Boolean     @default(true)
 
   // Relations
   incident    Incident    @relation(fields: [incidentId], references: [id], onDelete: Cascade)
@@ -247,6 +370,7 @@ model Evidence {
   description String?
   uploadedBy  String
   uploadedAt  DateTime    @default(now())
+  isPublic    Boolean     @default(false)
 
   // Relations
   incident    Incident    @relation(fields: [incidentId], references: [id], onDelete: Cascade)
@@ -254,7 +378,10 @@ model Evidence {
   @@map("evidence")
 }
 
-// Assignment Management
+// ========================================
+// ASSIGNMENT MANAGEMENT
+// ========================================
+
 model Assignment {
   id          String            @id @default(cuid())
   incidentId  String
@@ -277,7 +404,10 @@ model Assignment {
   @@map("assignments")
 }
 
-// Notification System
+// ========================================
+// NOTIFICATION SYSTEM
+// ========================================
+
 model Notification {
   id        String           @id @default(cuid())
   userId    String
@@ -286,6 +416,8 @@ model Notification {
   message   String
   data      Json?
   isRead    Boolean          @default(false)
+  priority  NotificationPriority @default(NORMAL)
+  expiresAt DateTime?
   createdAt DateTime         @default(now())
 
   // Relations
@@ -294,11 +426,77 @@ model Notification {
   @@map("notifications")
 }
 
-// Enums
+// ========================================
+// REPORTING SYSTEM
+// ========================================
+
+model Report {
+  id          String      @id @default(cuid())
+  title       String
+  type        ReportType
+  incidentId  String?
+  userId      String
+  content     Json
+  status      ReportStatus @default(DRAFT)
+  generatedAt DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  incident    Incident?   @relation(fields: [incidentId], references: [id])
+  user        User        @relation(fields: [userId], references: [id])
+
+  @@map("reports")
+}
+
+// ========================================
+// AUDIT & LOGGING
+// ========================================
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  resource  String
+  resourceId String?
+  details   Json?
+  ipAddress String?
+  userAgent String?
+  timestamp DateTime @default(now())
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
+// ========================================
+// SYSTEM CONFIGURATION
+// ========================================
+
+model SystemConfig {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json
+  category  String
+  isPublic  Boolean  @default(false)
+  updatedBy String
+  updatedAt DateTime @updatedAt
+
+  @@map("system_config")
+}
+
+// ========================================
+// ENUMS
+// ========================================
+
 enum UserRole {
   ADMIN
   CC_OPERATOR
   FIELD_RESPONDER
+  DISPATCHER
+  SUPERVISOR
+  TRAINER
 }
 
 enum PersonnelStatus {
@@ -307,6 +505,8 @@ enum PersonnelStatus {
   EN_ROUTE
   ON_SCENE
   UNAVAILABLE
+  ON_LEAVE
+  TRAINING
 }
 
 enum VehicleType {
@@ -318,6 +518,7 @@ enum VehicleType {
   COMMAND
   TANKER
   BRUSH
+  UTILITY
   OTHER
 }
 
@@ -327,6 +528,7 @@ enum VehicleStatus {
   EN_ROUTE
   ON_SCENE
   MAINTENANCE
+  RESERVE
 }
 
 enum HydrantStatus {
@@ -334,6 +536,39 @@ enum HydrantStatus {
   INACTIVE
   DAMAGED
   UNKNOWN
+  OUT_OF_SERVICE
+}
+
+enum HydrantType {
+  DRY_BARREL
+  WET_BARREL
+  WALL_HYDRANT
+  PRIVATE
+}
+
+enum EquipmentType {
+  BREATHING_APPARATUS
+  HOSE
+  NOZZLE
+  LADDER
+  TOOLS
+  COMMUNICATION
+  MEDICAL
+  OTHER
+}
+
+enum EquipmentStatus {
+  IN_SERVICE
+  OUT_OF_SERVICE
+  MAINTENANCE
+  RESERVE
+}
+
+enum MaintenanceType {
+  PREVENTIVE
+  CORRECTIVE
+  EMERGENCY
+  INSPECTION
 }
 
 enum IncidentType {
@@ -343,6 +578,7 @@ enum IncidentType {
   HAZMAT
   FALSE_ALARM
   SERVICE_CALL
+  TRAINING
   OTHER
 }
 
@@ -356,6 +592,7 @@ enum IncidentSeverity {
 enum IncidentStatus {
   ACTIVE
   DISPATCHED
+  EN_ROUTE
   ON_SCENE
   CONTAINED
   CLOSED
@@ -367,6 +604,7 @@ enum EvidenceType {
   VIDEO
   DOCUMENT
   AUDIO
+  WITNESS_STATEMENT
   OTHER
 }
 
@@ -377,6 +615,8 @@ enum AssignmentRole {
   DRIVER
   OBSERVER
   SUPPORT
+  INVESTIGATOR
+  SAFETY_OFFICER
 }
 
 enum AssignmentStatus {
@@ -386,6 +626,7 @@ enum AssignmentStatus {
   ON_SCENE
   COMPLETED
   CANCELLED
+  REJECTED
 }
 
 enum NotificationType {
@@ -394,5 +635,33 @@ enum NotificationType {
   ASSIGNMENT
   SYSTEM_ALERT
   MAINTENANCE_REMINDER
+  TRAINING_REMINDER
   GENERAL
+  EMERGENCY
+}
+
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+  CRITICAL
+}
+
+enum ReportType {
+  INCIDENT_SUMMARY
+  MONTHLY_REPORT
+  ANNUAL_REPORT
+  PERFORMANCE_REPORT
+  MAINTENANCE_REPORT
+  TRAINING_REPORT
+  CUSTOM
+}
+
+enum ReportStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  PUBLISHED
+  ARCHIVED
 }

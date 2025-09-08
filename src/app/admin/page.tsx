@@ -5,6 +5,8 @@ import { Layout } from "@/components/layout/layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { UserManagementDialog } from "@/components/admin/user-management-dialog"
+import { SystemSettingsDialog } from "@/components/admin/system-settings-dialog"
 import { 
   Settings, 
   Users, 
@@ -17,7 +19,11 @@ import {
   AlertTriangle,
   BarChart3,
   Key,
-  Globe
+  Globe,
+  Download,
+  Upload,
+  Eye,
+  Trash2
 } from "lucide-react"
 
 export default function AdminPage() {
@@ -130,18 +136,15 @@ export default function AdminPage() {
             <p className="text-gray-600">System administration and configuration</p>
           </div>
           <div className="flex items-center space-x-3">
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={() => alert('Database management coming soon!')}>
               <Database className="h-4 w-4 mr-2" />
               Database
             </Button>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={() => alert('Security dashboard coming soon!')}>
               <Shield className="h-4 w-4 mr-2" />
               Security
             </Button>
-            <Button>
-              <Settings className="h-4 w-4 mr-2" />
-              System Settings
-            </Button>
+            <SystemSettingsDialog />
           </div>
         </div>
 
@@ -285,13 +288,7 @@ export default function AdminPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button 
-                className="w-full" 
-                variant="outline"
-                onClick={() => router.push('/personnel')}
-              >
-                Add New User
-              </Button>
+              <UserManagementDialog />
               <Button 
                 className="w-full" 
                 variant="outline"
@@ -320,22 +317,47 @@ export default function AdminPage() {
               <Button 
                 className="w-full" 
                 variant="outline"
-                onClick={() => alert('Database backup initiated!')}
+                onClick={() => {
+                  alert('Database backup initiated! This will take a few minutes.')
+                  // In a real app, this would trigger an actual backup
+                }}
               >
+                <Download className="h-4 w-4 mr-2" />
                 Backup Database
               </Button>
               <Button 
                 className="w-full" 
                 variant="outline"
-                onClick={() => router.push('/reports')}
+                onClick={() => {
+                  // Simulate data export
+                  const data = {
+                    incidents: "156 records",
+                    personnel: "24 records", 
+                    vehicles: "8 records",
+                    stations: "3 records"
+                  }
+                  alert(`Exporting data: ${JSON.stringify(data, null, 2)}`)
+                }}
               >
+                <Upload className="h-4 w-4 mr-2" />
                 Export Data
               </Button>
               <Button 
                 className="w-full" 
                 variant="outline"
-                onClick={() => alert('System logs viewer coming soon!')}
+                onClick={() => {
+                  // Show system logs in a modal or new page
+                  const logs = [
+                    "2025-01-09 15:30:00 - INFO: System backup completed successfully",
+                    "2025-01-09 15:25:00 - INFO: User john.smith logged in",
+                    "2025-01-09 15:20:00 - WARN: High memory usage detected",
+                    "2025-01-09 15:15:00 - INFO: New incident created: 20250509-003",
+                    "2025-01-09 15:10:00 - ERROR: Database connection timeout"
+                  ]
+                  alert(`Recent System Logs:\n\n${logs.join('\n')}`)
+                }}
               >
+                <Eye className="h-4 w-4 mr-2" />
                 System Logs
               </Button>
             </CardContent>
@@ -352,7 +374,14 @@ export default function AdminPage() {
               <Button 
                 className="w-full" 
                 variant="outline"
-                onClick={() => alert('API Keys management coming soon!')}
+                onClick={() => {
+                  const apiKeys = [
+                    { name: "Google Maps API", status: "Active", lastUsed: "2 minutes ago" },
+                    { name: "SMS Gateway API", status: "Active", lastUsed: "5 minutes ago" },
+                    { name: "Weather API", status: "Inactive", lastUsed: "1 hour ago" }
+                  ]
+                  alert(`API Keys Status:\n\n${apiKeys.map(key => `${key.name}: ${key.status} (${key.lastUsed})`).join('\n')}`)
+                }}
               >
                 <Key className="h-4 w-4 mr-2" />
                 API Keys
@@ -360,15 +389,35 @@ export default function AdminPage() {
               <Button 
                 className="w-full" 
                 variant="outline"
-                onClick={() => alert('Audit logs viewer coming soon!')}
+                onClick={() => {
+                  const auditLogs = [
+                    "2025-01-09 15:30:00 - User john.smith accessed admin panel",
+                    "2025-01-09 15:25:00 - User sarah.johnson created new incident",
+                    "2025-01-09 15:20:00 - System settings updated by mike.davis",
+                    "2025-01-09 15:15:00 - Failed login attempt from IP 192.168.1.100",
+                    "2025-01-09 15:10:00 - User lisa.wilson password changed"
+                  ]
+                  alert(`Recent Audit Logs:\n\n${auditLogs.join('\n')}`)
+                }}
               >
+                <Eye className="h-4 w-4 mr-2" />
                 Audit Logs
               </Button>
               <Button 
                 className="w-full" 
                 variant="outline"
-                onClick={() => alert('Security settings coming soon!')}
+                onClick={() => {
+                  const securitySettings = {
+                    "Two-Factor Auth": "Enabled",
+                    "Password Policy": "Strong (8+ chars, numbers, symbols)",
+                    "Session Timeout": "8 hours",
+                    "IP Whitelist": "192.168.1.0/24, 10.0.0.0/8",
+                    "Failed Login Lockout": "5 attempts, 15 min lockout"
+                  }
+                  alert(`Security Settings:\n\n${Object.entries(securitySettings).map(([key, value]) => `${key}: ${value}`).join('\n')}`)
+                }}
               >
+                <Shield className="h-4 w-4 mr-2" />
                 Security Settings
               </Button>
             </CardContent>

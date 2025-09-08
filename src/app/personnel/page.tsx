@@ -4,6 +4,7 @@ import { Layout } from "@/components/layout/layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { 
   Users, 
   Plus, 
@@ -294,21 +295,37 @@ export default function PersonnelPage() {
                       {/* Basic Info */}
                       <div className="space-y-2">
                         <h4 className="font-medium">Basic Information</h4>
-                        <div className="text-sm space-y-1">
-                          <p><span className="font-medium">Name:</span> {person.name}</p>
-                          <p><span className="font-medium">Badge:</span> {person.badgeNumber}</p>
-                          <p><span className="font-medium">Rank:</span> 
-                            <Badge variant={getRankColor(person.rank)} className="ml-2">
-                              {person.rank}
-                            </Badge>
-                          </p>
-                          <p><span className="font-medium">Status:</span>
-                            <Badge variant={getStatusColor(person.status)} className="ml-2">
-                              {person.status}
-                            </Badge>
-                          </p>
-                          <p><span className="font-medium">Station:</span> {person.station}</p>
-                          <p><span className="font-medium">Hire Date:</span> {new Date(person.hireDate).toLocaleDateString()}</p>
+                        <div className="grid grid-cols-2 gap-4">
+                          {/* Left Column - Basic Info */}
+                          <div className="text-sm space-y-1">
+                            <p><span className="font-medium">Name:</span> {person.name}</p>
+                            <p><span className="font-medium">Badge:</span> {person.badgeNumber}</p>
+                            <p><span className="font-medium">Rank:</span> 
+                              <Badge variant={getRankColor(person.rank)} className="ml-2">
+                                {person.rank}
+                              </Badge>
+                            </p>
+                            <p><span className="font-medium">Status:</span>
+                              <Badge variant={getStatusColor(person.status)} className="ml-2">
+                                {person.status}
+                              </Badge>
+                            </p>
+                            <p><span className="font-medium">Station:</span> {person.station}</p>
+                            <p><span className="font-medium">Hire Date:</span> {new Date(person.hireDate).toLocaleDateString()}</p>
+                          </div>
+                          
+                          {/* Right Column - Profile Picture */}
+                          <div className="flex justify-center items-start">
+                            <Avatar className="h-24 w-24">
+                              <AvatarImage 
+                                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${person.name.replace(' ', '+')}`} 
+                                alt={person.name}
+                              />
+                              <AvatarFallback className="text-lg">
+                                {person.name.split(' ').map(n => n[0]).join('')}
+                              </AvatarFallback>
+                            </Avatar>
+                          </div>
                         </div>
                       </div>
 

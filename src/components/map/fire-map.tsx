@@ -255,7 +255,7 @@ export function FireMap() {
       </div>
 
       {/* Floating Action Buttons */}
-      <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-10 flex gap-2 sm:gap-3">
+      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 z-10 flex gap-2 sm:gap-3">
         <Button
           variant="outline"
           size="sm"

@@ -308,12 +308,47 @@ export default function VehiclesPage() {
                           <p><span className="font-medium">Type:</span> {vehicle.type}</p>
                           <p><span className="font-medium">Name:</span> {vehicle.name}</p>
                           <p><span className="font-medium">Station:</span> {vehicle.station}</p>
-                          <p><span className="font-medium">Status:</span>
+                          <div className="flex items-center">
+                            <span className="font-medium">Status:</span>
                             <Badge variant={getStatusColor(vehicle.status)} className="ml-2">
                               {vehicle.status}
                             </Badge>
-                          </p>
+                          </div>
                         </div>
+                      </div>
+
+                      {/* Vehicle Picture */}
+                      <div className="space-y-2">
+                        <h4 className="font-medium">Vehicle Image</h4>
+                        <div className="relative w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
+                          <img
+                            src={`https://images.unsplash.com/photo-1581578731548-c6a0c3f2fcc0?w=400&h=300&fit=crop&crop=center&auto=format&q=80`}
+                            alt={`${vehicle.unitId} - ${vehicle.type}`}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              // Fallback to a placeholder if image fails to load
+                              e.currentTarget.src = `data:image/svg+xml;base64,${btoa(`
+                                <svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+                                  <rect width="400" height="300" fill="#f3f4f6"/>
+                                  <text x="200" y="150" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#6b7280">
+                                    ${vehicle.type} Vehicle
+                                  </text>
+                                  <text x="200" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#9ca3af">
+                                    ${vehicle.unitId}
+                                  </text>
+                                </svg>
+                              `)}`
+                            }}
+                          />
+                          <div className="absolute top-2 right-2">
+                            <Badge variant="secondary" className="bg-white/90 text-gray-700">
+                              {vehicle.type}
+                            </Badge>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-500 text-center">
+                          {vehicle.unitId} - {vehicle.type} Vehicle
+                        </p>
                       </div>
 
                       {/* Location */}

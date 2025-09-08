@@ -17,13 +17,18 @@ import {
   Building2,
   Menu,
   X,
+  LogOut,
 } from "lucide-react"
 import { NotificationBell } from "@/components/notifications/notification-bell"
 import { useState } from "react"
+import { useScrollBehavior } from "@/hooks/use-scroll-behavior"
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: Home },
-  { name: "Map & Assets", href: "/map", icon: Map },
+  { name: "Map", href: "/map", icon: Map },
+  { name: "Vehicles", href: "/assets/vehicles", icon: Truck },
+  { name: "Hydrants", href: "/assets/hydrants", icon: Droplets },
+  { name: "Stations", href: "/assets/stations", icon: Building2 },
   { name: "Personnel", href: "/personnel", icon: Users },
   { name: "Incidents", href: "/incidents", icon: AlertTriangle },
   { name: "Reports", href: "/reports", icon: BarChart3 },
@@ -31,16 +36,10 @@ const navigation = [
   { name: "Admin", href: "/admin", icon: Settings },
 ]
 
-const assetSubmenu = [
-  { name: "Vehicles", href: "/assets/vehicles", icon: Truck },
-  { name: "Hydrants", href: "/assets/hydrants", icon: Droplets },
-  { name: "Stations", href: "/assets/stations", icon: Building2 },
-]
-
 export function Sidebar() {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
-  const [showAssets, setShowAssets] = useState(false)
+  const scrollState = useScrollBehavior()
 
   return (
     <>
@@ -58,9 +57,16 @@ export function Sidebar() {
       {/* Sidebar */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-40 w-80 bg-white border-r border-gray-300 shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          "fixed inset-y-0 left-0 z-40 w-80 bg-white border-r border-gray-300 shadow-lg transform transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
+          isOpen ? "translate-x-0" : "-translate-x-full",
+          scrollState.isScrolling ? "shadow-xl" : "shadow-lg"
         )}
+        style={{
+          // Subtle background change when scrolling
+          background: scrollState.isScrolling 
+            ? 'linear-gradient(180deg, #ffffff 0%, #fafafa 100%)'
+            : '#ffffff'
+        }}
       >
         <div className="flex flex-col h-full">
           {/* Logo & Station */}
@@ -80,52 +86,22 @@ export function Sidebar() {
           <nav className="flex-1 px-4 py-6 space-y-2">
             {navigation.map((item) => {
               const isActive = pathname === item.href
-              const isAssets = item.href === "/map"
               
               return (
-                <div key={item.name}>
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
-                      isActive
-                        ? "bg-red-600 text-white shadow-md"
-                        : "text-gray-800 hover:bg-gray-200 hover:text-gray-900"
-                    )}
-                    onClick={() => {
-                      if (isAssets) {
-                        setShowAssets(!showAssets)
-                      } else {
-                        setIsOpen(false)
-                      }
-                    }}
-                  >
-                    <item.icon className="mr-3 h-5 w-5" />
-                    {item.name}
-                  </Link>
-                  
-                  {/* Asset submenu */}
-                  {isAssets && showAssets && (
-                    <div className="ml-6 mt-2 space-y-1">
-                      {assetSubmenu.map((subItem) => (
-                        <Link
-                          key={subItem.name}
-                          href={subItem.href}
-                          className={cn(
-                            "flex items-center px-3 py-2 text-sm rounded-md transition-colors",
-                            pathname === subItem.href
-                              ? "bg-red-600 text-white shadow-sm"
-                              : "text-gray-800 hover:bg-gray-200 hover:text-gray-900"
-                          )}
-                          onClick={() => setIsOpen(false)}
-                        >
-                          <subItem.icon className="mr-3 h-4 w-4" />
-                          {subItem.name}
-                        </Link>
-                      ))}
-                    </div>
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={cn(
+                    "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                    isActive
+                      ? "bg-red-600 text-white shadow-md"
+                      : "text-gray-800 hover:bg-gray-200 hover:text-gray-900"
                   )}
-                </div>
+                  onClick={() => setIsOpen(false)}
+                >
+                  <item.icon className="mr-3 h-5 w-5" />
+                  {item.name}
+                </Link>
               )
             })}
           </nav>
@@ -146,7 +122,17 @@ export function Sidebar() {
                   </p>
                 </div>
               </div>
-              <NotificationBell />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  // Handle logout logic here
+                  alert('Logout functionality would be implemented here')
+                }}
+                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </div>

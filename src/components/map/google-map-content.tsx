@@ -25,6 +25,8 @@ interface MapContentProps {
   mockIncidents: any[]
   getStatusColor: (status: string) => string
   getSeverityColor: (severity: string) => string
+  showAdvancedFeatures?: boolean
+  onToggleAdvancedFeatures?: () => void
 }
 
 const render = (status: Status) => {
@@ -47,13 +49,15 @@ function MapComponent({
   mockHydrants,
   mockIncidents,
   getStatusColor,
-  getSeverityColor
+  getSeverityColor,
+  showAdvancedFeatures = false,
+  onToggleAdvancedFeatures
 }: MapContentProps) {
   const ref = useRef<HTMLDivElement>(null)
   const [map, setMap] = useState<google.maps.Map>()
   const [markers, setMarkers] = useState<google.maps.Marker[]>([])
+  const markersRef = useRef<google.maps.Marker[]>([])
   const [infoWindow, setInfoWindow] = useState<google.maps.InfoWindow>()
-  const [showAdvancedFeatures, setShowAdvancedFeatures] = useState(false)
 
   // Create marker icons once when Google Maps is loaded
   const [markerIcons, setMarkerIcons] = useState<{[key: string]: any}>({})
@@ -128,17 +132,18 @@ function MapComponent({
 
   // Clear existing markers
   const clearMarkers = useCallback(() => {
-    markers.forEach(marker => marker.setMap(null))
+    markersRef.current.forEach(marker => marker.setMap(null))
+    markersRef.current = []
     setMarkers([])
-  }, []) // Remove markers dependency to prevent infinite loop
+  }, [])
 
   // Add markers based on layers
   useEffect(() => {
     if (!map || !infoWindow || !window.google?.maps || Object.keys(markerIcons).length === 0) return
 
     // Clear existing markers
-    markers.forEach(marker => marker.setMap(null))
-    setMarkers([])
+    markersRef.current.forEach(marker => marker.setMap(null))
+    markersRef.current = []
     
     const newMarkers: google.maps.Marker[] = []
 
@@ -278,8 +283,9 @@ function MapComponent({
       })
     }
 
+    markersRef.current = newMarkers
     setMarkers(newMarkers)
-  }, [map, infoWindow, layers, mockStations, mockVehicles, mockHydrants, mockIncidents, getStatusColor, getSeverityColor, markerIcons, markers])
+  }, [map, infoWindow, layers, mockStations, mockVehicles, mockHydrants, mockIncidents, getStatusColor, getSeverityColor, markerIcons])
 
   // Listen for custom events from info windows
   useEffect(() => {
@@ -339,30 +345,6 @@ function MapComponent({
   return (
     <div className="h-full w-full relative">
       <div ref={ref} className="h-full w-full" />
-      
-      {/* Advanced Features Toggle */}
-      <div className="absolute top-4 right-4 z-10">
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => setShowAdvancedFeatures(!showAdvancedFeatures)}
-          className="bg-white shadow-lg"
-        >
-          {showAdvancedFeatures ? "Hide Features" : "Show Features"}
-        </Button>
-      </div>
-
-      {/* Advanced Features Panel */}
-      {showAdvancedFeatures && (
-        <div className="absolute top-16 right-4 z-10 w-80">
-          <AdvancedMapFeatures
-            map={map}
-            incidents={mockIncidents}
-            vehicles={mockVehicles}
-            stations={mockStations}
-          />
-        </div>
-      )}
     </div>
   )
 }
