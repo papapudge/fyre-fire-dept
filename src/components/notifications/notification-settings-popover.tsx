@@ -70,7 +70,7 @@ export function NotificationSettingsPopover({ isOpen, onClose }: NotificationSet
       />
       
       {/* Settings Panel */}
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 max-h-[80vh] bg-white rounded-lg shadow-2xl border border-gray-200 z-50 overflow-y-auto">
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 max-h-[80vh] bg-white rounded-lg border border-gray-600 z-50 overflow-y-auto">
         {/* Header */}
         <div className="p-4 border-b border-gray-200 flex items-center justify-between">
           <div className="flex items-center space-x-2">

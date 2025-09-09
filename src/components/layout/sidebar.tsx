@@ -57,9 +57,8 @@ export function Sidebar() {
       {/* Sidebar */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-40 w-80 bg-white border-r border-gray-300 shadow-lg transform transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
-          isOpen ? "translate-x-0" : "-translate-x-full",
-          scrollState.isScrolling ? "shadow-xl" : "shadow-lg"
+          "fixed inset-y-0 left-0 z-40 w-80 bg-white border-r border-gray-300 transform transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
+          isOpen ? "translate-x-0" : "-translate-x-full"
         )}
         style={{
           // Subtle background change when scrolling
@@ -94,8 +93,8 @@ export function Sidebar() {
                   className={cn(
                     "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
                     isActive
-                      ? "bg-red-600 text-white shadow-md"
-                      : "text-gray-800 hover:bg-gray-200 hover:text-gray-900"
+                      ? "bg-red-600 text-white border border-red-700"
+                      : "text-gray-800 hover:bg-gray-200 hover:text-gray-900 border border-gray-200"
                   )}
                   onClick={() => setIsOpen(false)}
                 >

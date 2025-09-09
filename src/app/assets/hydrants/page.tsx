@@ -168,8 +168,8 @@ export default function HydrantsPage() {
               return (
                 <Card 
                   key={hydrant.id} 
-                  className={`cursor-pointer transition-all hover:shadow-md ${
-                    selectedHydrant === hydrant.id ? "ring-2 ring-red-500 shadow-md" : ""
+                  className={`cursor-pointer transition-all hover:border-gray-300 ${
+                    selectedHydrant === hydrant.id ? "ring-2 ring-red-500 border-gray-300" : ""
                   }`}
                   onClick={() => setSelectedHydrant(hydrant.id)}
                 >

@@ -17,8 +17,8 @@ export function Layout({ children }: LayoutProps) {
       <main 
         className={`flex-1 overflow-auto transition-all duration-300 ${
           scrollState.isScrolling 
-            ? 'shadow-lg' 
-            : 'shadow-none'
+            ? 'border-l border-gray-300' 
+            : 'border-l border-gray-200'
         }`}
         style={{
           // Dynamic background based on scroll
@@ -41,7 +41,7 @@ export function Layout({ children }: LayoutProps) {
       {/* Enhanced scroll indicator with progress */}
       {scrollState.isScrolling && (
         <div className="fixed top-4 right-4 z-50 pointer-events-none">
-          <div className="bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg">
+          <div className="bg-white/90 backdrop-blur-sm rounded-lg p-2 border border-gray-200">
             <div className="flex items-center space-x-2">
               <div className={`w-2 h-8 rounded-full transition-all duration-300 ${
                 scrollState.scrollDirection === 'down' 
@@ -70,7 +70,7 @@ export function Layout({ children }: LayoutProps) {
       {scrollState.isScrolling && scrollState.scrollY > 200 && (
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="fixed bottom-6 right-6 z-50 bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+          className="fixed bottom-6 right-6 z-50 bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full border border-blue-700 transition-all duration-300 hover:scale-110"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />

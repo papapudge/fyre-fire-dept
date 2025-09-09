@@ -181,7 +181,7 @@ export function FireMap() {
       <div className={`absolute top-2 left-2 z-10 transition-all duration-300 ${
         showLayersPanel ? 'translate-x-0' : '-translate-x-full'
       }`}>
-        <Card className="w-72 sm:w-80 shadow-lg max-h-[calc(100vh-4rem)] overflow-hidden">
+        <Card className="w-72 sm:w-80 border border-gray-400 max-h-[calc(100vh-4rem)] overflow-hidden">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg flex items-center gap-2">
@@ -256,7 +256,7 @@ export function FireMap() {
       <div className={`absolute top-2 right-2 z-10 transition-all duration-300 ${
         showEntitiesPanel ? 'translate-x-0' : 'translate-x-full'
       }`}>
-        <Card className="w-72 sm:w-80 shadow-lg max-h-[calc(100vh-4rem)] overflow-hidden">
+        <Card className="w-72 sm:w-80 border border-gray-400 max-h-[calc(100vh-4rem)] overflow-hidden">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg flex items-center gap-2">
@@ -288,7 +288,7 @@ export function FireMap() {
           variant="outline"
           size="sm"
           onClick={() => setShowLayersPanel(!showLayersPanel)}
-          className="bg-white shadow-lg hover:bg-gray-50 text-xs sm:text-sm border border-gray-200"
+          className="bg-white border border-gray-400 hover:bg-gray-50 text-xs sm:text-sm"
         >
           <Layers className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
           <span className="hidden sm:inline">Layers</span>
@@ -297,7 +297,7 @@ export function FireMap() {
           variant="outline"
           size="sm"
           onClick={() => setShowEntitiesPanel(!showEntitiesPanel)}
-          className="bg-white shadow-lg hover:bg-gray-50 text-xs sm:text-sm border border-gray-200"
+          className="bg-white border border-gray-400 hover:bg-gray-50 text-xs sm:text-sm"
         >
           <Activity className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
           <span className="hidden sm:inline">Entities</span>
@@ -306,7 +306,7 @@ export function FireMap() {
           variant="outline"
           size="sm"
           onClick={handleLocate}
-          className="bg-white shadow-lg hover:bg-gray-50 text-xs sm:text-sm border border-gray-200"
+          className="bg-white border border-gray-400 hover:bg-gray-50 text-xs sm:text-sm"
         >
           <Locate className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
           <span className="hidden sm:inline">Locate</span>
@@ -315,7 +315,7 @@ export function FireMap() {
           variant="outline"
           size="sm"
           onClick={toggleMapProvider}
-          className={`shadow-lg text-xs sm:text-sm border ${
+          className={`border border-gray-400 text-xs sm:text-sm ${
             useGoogleMaps 
               ? 'bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100' 
               : 'bg-green-50 border-green-200 text-green-700 hover:bg-green-100'

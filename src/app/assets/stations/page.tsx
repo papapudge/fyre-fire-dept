@@ -177,8 +177,8 @@ export default function StationsPage() {
             {filteredStations.map((station) => (
               <Card 
                 key={station.id} 
-                className={`cursor-pointer transition-all hover:shadow-md ${
-                  selectedStation === station.id ? "ring-2 ring-red-500 shadow-md" : ""
+                className={`cursor-pointer transition-all hover:border-gray-300 ${
+                  selectedStation === station.id ? "ring-2 ring-red-500 border-gray-300" : ""
                 }`}
                 onClick={() => setSelectedStation(station.id)}
               >

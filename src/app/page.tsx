@@ -117,7 +117,7 @@ export default function Dashboard() {
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card 
-            className="cursor-pointer hover:shadow-md transition-shadow"
+            className="cursor-pointer hover:border-gray-300 transition-colors border"
             onClick={() => router.push('/incidents')}
           >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -133,7 +133,7 @@ export default function Dashboard() {
           </Card>
 
           <Card
-            className="cursor-pointer hover:shadow-md transition-shadow"
+            className="cursor-pointer hover:border-gray-300 transition-colors border"
             onClick={() => router.push('/personnel')}
           >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -149,7 +149,7 @@ export default function Dashboard() {
           </Card>
 
           <Card
-            className="cursor-pointer hover:shadow-md transition-shadow"
+            className="cursor-pointer hover:border-gray-300 transition-colors border"
             onClick={() => router.push('/map')}
           >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -165,7 +165,7 @@ export default function Dashboard() {
           </Card>
 
           <Card
-            className="cursor-pointer hover:shadow-md transition-shadow"
+            className="cursor-pointer hover:border-gray-300 transition-colors border"
             onClick={() => router.push('/reports')}
           >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -312,7 +312,7 @@ export default function Dashboard() {
               <div className="flex flex-col items-center space-y-3">
                 <div className="relative">
                   {/* iPhone-style background */}
-                  <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl shadow-lg flex items-center justify-center transform hover:scale-105 transition-transform cursor-pointer"
+                  <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl border border-blue-500 flex items-center justify-center transform hover:scale-105 transition-transform cursor-pointer"
                        onClick={() => router.push('/map')}>
                     <Navigation className="h-8 w-8 text-white" />
                   </div>
@@ -328,7 +328,7 @@ export default function Dashboard() {
               {/* Call Action */}
               <div className="flex flex-col items-center space-y-3">
                 <div className="relative">
-                  <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl shadow-lg flex items-center justify-center transform hover:scale-105 transition-transform cursor-pointer"
+                  <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl border border-green-500 flex items-center justify-center transform hover:scale-105 transition-transform cursor-pointer"
                        onClick={() => window.open('tel:100', '_self')}>
                     <Phone className="h-8 w-8 text-white" />
                   </div>
@@ -340,7 +340,7 @@ export default function Dashboard() {
               {/* Log Action */}
               <div className="flex flex-col items-center space-y-3">
                 <div className="relative">
-                  <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl shadow-lg flex items-center justify-center transform hover:scale-105 transition-transform cursor-pointer"
+                  <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl border border-orange-500 flex items-center justify-center transform hover:scale-105 transition-transform cursor-pointer"
                        onClick={() => router.push('/reports')}>
                     <FileText className="h-8 w-8 text-white" />
                   </div>
@@ -354,7 +354,7 @@ export default function Dashboard() {
               {/* Photo Action */}
               <div className="flex flex-col items-center space-y-3">
                 <div className="relative">
-                  <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl shadow-lg flex items-center justify-center transform hover:scale-105 transition-transform cursor-pointer"
+                  <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl border border-purple-500 flex items-center justify-center transform hover:scale-105 transition-transform cursor-pointer"
                        onClick={() => {
                          // In a real app, this would open camera or photo gallery
                          alert('Photo capture feature would open camera on mobile device')

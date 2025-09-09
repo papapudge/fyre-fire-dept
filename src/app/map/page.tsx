@@ -13,7 +13,7 @@ export default function MapPage() {
   return (
     <div className="h-screen w-screen overflow-hidden flex flex-col">
       {/* Header with back button */}
-      <div className="flex items-center justify-between p-3 bg-white border-b shadow-sm flex-shrink-0">
+      <div className="flex items-center justify-between p-3 bg-white border-b border border-gray-200 flex-shrink-0">
         <div className="flex items-center gap-2 min-w-0">
           <Button
             variant="ghost"
