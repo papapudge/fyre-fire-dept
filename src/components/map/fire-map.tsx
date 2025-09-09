@@ -153,8 +153,10 @@ export function FireMap() {
 
   // Detect Google Maps failures and switch to Leaflet
   useEffect(() => {
+    if (typeof window === 'undefined') return
+
     const checkGoogleMaps = () => {
-      if (useGoogleMaps && typeof window !== 'undefined') {
+      if (useGoogleMaps) {
         // Check if Google Maps failed to load after 5 seconds
         const timer = setTimeout(() => {
           if (!window.google?.maps) {
