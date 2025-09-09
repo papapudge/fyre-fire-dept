@@ -78,7 +78,7 @@ function MapComponent({
   const [markerIcons, setMarkerIcons] = useState<{[key: string]: any}>({})
 
   useEffect(() => {
-    if (window.google?.maps && Object.keys(markerIcons).length === 0) {
+    if (typeof window !== 'undefined' && window.google?.maps && Object.keys(markerIcons).length === 0) {
       const createMarkerIcon = (emoji: string, color: string = "#ffffff") => {
         return {
           url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
@@ -108,7 +108,7 @@ function MapComponent({
 
   // Initialize map
   useEffect(() => {
-    if (ref.current && !map && window.google?.maps) {
+    if (ref.current && !map && typeof window !== 'undefined' && window.google?.maps) {
       const newMap = new google.maps.Map(ref.current, {
         center: { lat: center[0], lng: center[1] },
         zoom: zoom,
@@ -158,7 +158,7 @@ function MapComponent({
 
   // Add markers based on layers
   useEffect(() => {
-    if (!map || !infoWindow || !window.google?.maps || Object.keys(markerIcons).length === 0) return
+    if (!map || !infoWindow || typeof window === 'undefined' || !window.google?.maps || Object.keys(markerIcons).length === 0) return
 
     // Clear existing markers
     markersRef.current.forEach(marker => marker.setMap(null))
@@ -308,6 +308,8 @@ function MapComponent({
 
   // Listen for custom events from info windows
   useEffect(() => {
+    if (typeof window === 'undefined') return
+
     const handleViewStation = (event: CustomEvent) => {
       const station = event.detail
       // Center map on station

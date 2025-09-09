@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/button"
 // Import FireMap directly to avoid dynamic import conflicts
 import { FireMap } from "@/components/map/fire-map"
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
+
 export default function MapPage() {
   const router = useRouter()
 
