@@ -32,9 +32,24 @@ interface MapContentProps {
 const render = (status: Status) => {
   switch (status) {
     case Status.LOADING:
-      return <div className="h-full w-full flex items-center justify-center">Loading map...</div>
+      return <div className="h-full w-full flex items-center justify-center">Loading Google Maps...</div>
     case Status.FAILURE:
-      return <div className="h-full w-full flex items-center justify-center text-red-500">Error loading map</div>
+      return (
+        <div className="h-full w-full flex flex-col items-center justify-center text-center p-4">
+          <div className="text-red-500 mb-4">
+            <h3 className="text-lg font-semibold mb-2">Google Maps Error</h3>
+            <p className="text-sm">Falling back to OpenStreetMap</p>
+          </div>
+          <div className="text-xs text-gray-500">
+            <p>Common causes:</p>
+            <ul className="list-disc list-inside mt-1">
+              <li>API key restrictions</li>
+              <li>Billing not set up</li>
+              <li>Required APIs not enabled</li>
+            </ul>
+          </div>
+        </div>
+      )
     default:
       return null
   }
@@ -122,11 +137,15 @@ function MapComponent({
     }
   }, [ref, map, center, zoom])
 
-  // Update map center and zoom
+  // Update map center and zoom (throttled to reduce API calls)
   useEffect(() => {
     if (map) {
-      map.setCenter({ lat: center[0], lng: center[1] })
-      map.setZoom(zoom)
+      const timeoutId = setTimeout(() => {
+        map.setCenter({ lat: center[0], lng: center[1] })
+        map.setZoom(zoom)
+      }, 300) // Throttle updates to reduce API calls
+      
+      return () => clearTimeout(timeoutId)
     }
   }, [map, center, zoom])
 

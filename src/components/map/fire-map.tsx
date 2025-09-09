@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { I'm Shima, and I'm generating the entire package API for the entire project using DenoDeepMind.
+import { 
   MapPin, 
   Eye, 
   EyeOff, 
@@ -25,13 +25,14 @@ import { I'm Shima, and I'm generating the entire package API for the entire pro
 } from "lucide-react"
 import dynamic from "next/dynamic"
 
-// Dynamic import only for Google Maps to avoid SSR issues
-const MapContent = dynamic(() => import('./google-map-content'), { 
+// Dynamic import for Google Maps with fallback to Leaflet
+const GoogleMapContent = dynamic(() => import('./google-map-content'), { 
   ssr: false,
   loading: () => <div className="h-full w-full flex items-center justify-center">Loading Google Maps...</div>
 })
 
-// Import LiveTracking directly to avoid dynamic import conflicts
+// Import Leaflet fallback and LiveTracking directly
+import { MapContent } from './map-content'
 import { LiveTracking } from './live-tracking'
 
 interface LayerState {
@@ -125,6 +126,7 @@ export function FireMap() {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | undefined>(undefined)
   const [showLayersPanel, setShowLayersPanel] = useState(false)
   const [showEntitiesPanel, setShowEntitiesPanel] = useState(false)
+  const [useGoogleMaps, setUseGoogleMaps] = useState(true)
 
   const toggleLayer = useCallback((layer: keyof LayerState) => {
     setLayers(prev => ({ ...prev, [layer]: !prev[layer] }))
@@ -144,6 +146,30 @@ export function FireMap() {
     setZoom(12)
     setSelectedVehicle(undefined)
   }, [])
+
+  const handleGoogleMapsError = useCallback(() => {
+    setUseGoogleMaps(false)
+  }, [])
+
+  // Detect Google Maps failures and switch to Leaflet
+  useEffect(() => {
+    const checkGoogleMaps = () => {
+      if (useGoogleMaps && typeof window !== 'undefined') {
+        // Check if Google Maps failed to load after 5 seconds
+        const timer = setTimeout(() => {
+          if (!window.google?.maps) {
+            setUseGoogleMaps(false)
+          }
+        }, 5000)
+        return () => clearTimeout(timer)
+      }
+    }
+    checkGoogleMaps()
+  }, [useGoogleMaps])
+
+  const toggleMapProvider = useCallback(() => {
+    setUseGoogleMaps(!useGoogleMaps)
+  }, [useGoogleMaps])
 
   return (
     <div className="h-full w-full relative overflow-hidden">
@@ -283,37 +309,80 @@ export function FireMap() {
           <Locate className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
           <span className="hidden sm:inline">Locate</span>
         </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={toggleMapProvider}
+          className={`shadow-lg text-xs sm:text-sm border ${
+            useGoogleMaps 
+              ? 'bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100' 
+              : 'bg-green-50 border-green-200 text-green-700 hover:bg-green-100'
+          }`}
+        >
+          <MapPin className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+          <span className="hidden sm:inline">{useGoogleMaps ? 'Google' : 'OpenStreet'}</span>
+        </Button>
       </div>
 
       {/* Map */}
       <div className="h-full">
-        <MapContent
-          center={center}
-          zoom={zoom}
-          layers={layers}
-          mockStations={mockStations}
-          mockVehicles={mockVehicles}
-          mockHydrants={mockHydrants}
-          mockIncidents={mockIncidents}
-          getStatusColor={(status: string) => {
-            switch (status.toLowerCase()) {
-              case "on scene": return "destructive"
-              case "en route": return "warning"
-              case "in service": return "success"
-              case "active": return "success"
-              case "damaged": return "destructive"
-              default: return "secondary"
-            }
-          }}
-          getSeverityColor={(severity: string) => {
-            switch (severity.toLowerCase()) {
-              case "high": return "destructive"
-              case "medium": return "warning"
-              case "low": return "success"
-              default: return "secondary"
-            }
-          }}
-        />
+        {useGoogleMaps ? (
+          <GoogleMapContent
+            center={center}
+            zoom={zoom}
+            layers={layers}
+            mockStations={mockStations}
+            mockVehicles={mockVehicles}
+            mockHydrants={mockHydrants}
+            mockIncidents={mockIncidents}
+            getStatusColor={(status: string) => {
+              switch (status.toLowerCase()) {
+                case "on scene": return "destructive"
+                case "en route": return "warning"
+                case "in service": return "success"
+                case "active": return "success"
+                case "damaged": return "destructive"
+                default: return "secondary"
+              }
+            }}
+            getSeverityColor={(severity: string) => {
+              switch (severity.toLowerCase()) {
+                case "high": return "destructive"
+                case "medium": return "warning"
+                case "low": return "success"
+                default: return "secondary"
+              }
+            }}
+          />
+        ) : (
+          <MapContent
+            center={center}
+            zoom={zoom}
+            layers={layers}
+            mockStations={mockStations}
+            mockVehicles={mockVehicles}
+            mockHydrants={mockHydrants}
+            mockIncidents={mockIncidents}
+            getStatusColor={(status: string) => {
+              switch (status.toLowerCase()) {
+                case "on scene": return "destructive"
+                case "en route": return "warning"
+                case "in service": return "success"
+                case "active": return "success"
+                case "damaged": return "destructive"
+                default: return "secondary"
+              }
+            }}
+            getSeverityColor={(severity: string) => {
+              switch (severity.toLowerCase()) {
+                case "high": return "destructive"
+                case "medium": return "warning"
+                case "low": return "success"
+                default: return "secondary"
+              }
+            }}
+          />
+        )}
       </div>
     </div>
   )
