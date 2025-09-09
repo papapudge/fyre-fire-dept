@@ -1,12 +1,8 @@
 "use client"
 
-import { Suspense } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, MapPin } from "lucide-react"
+import { ArrowLeft, MapPin, Construction } from "lucide-react"
 import { Button } from "@/components/ui/button"
-
-// Import FireMap directly to avoid dynamic import conflicts
-import { FireMap } from "@/components/map/fire-map"
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -38,18 +34,16 @@ export default function MapPage() {
         </div>
       </div>
 
-      {/* Map content */}
-      <div className="flex-1 min-h-0 overflow-hidden">
-        <Suspense fallback={
-          <div className="h-full flex items-center justify-center bg-gray-50">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-              <p className="text-gray-600">Loading map...</p>
-            </div>
-          </div>
-        }>
-          <FireMap />
-        </Suspense>
+      {/* Temporary placeholder */}
+      <div className="flex-1 min-h-0 overflow-hidden flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <Construction className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-700 mb-2">Map Under Construction</h2>
+          <p className="text-gray-500 mb-4">The interactive map is being updated for better performance.</p>
+          <Button onClick={() => router.back()} variant="outline">
+            Go Back
+          </Button>
+        </div>
       </div>
     </div>
   )
